@@ -6,7 +6,7 @@
         <div class="input-group-prepend">
           <span class="input-group-text">&#402;&#x27EE;&#x1d465;&#x27EF; &#61;</span>
         </div>
-        <input type="text" class="form-control" placeholder="x^2" v-model.trim="newPlot" @keydown.up="loadFormula(1)" @keydown.down="loadFormula(-1)" @keyup.enter="addPlot">
+        <input type="text" class="form-control" placeholder="x^2" v-model.trim="newPlot" @blur="history.position = -1" @keydown.up="loadFormula(1)" @keydown.down="loadFormula(-1)" @keyup.enter="addPlot">
       </div>
 
       <app-plot-container :plots="plots" :options="{grid: true,}"></app-plot-container>
@@ -25,8 +25,8 @@ export default {
       newPlot: "",
       plots: [],
       history: {
-        position: 0,
-        plots: [""]
+        position: -1,
+        plots: []
       }
     };
   },
@@ -47,19 +47,17 @@ export default {
       });
 
       this.history.plots.unshift(this.newPlot);
+      this.history.position = -1;
       this.newPlot = "";
     },
 
-    // This doesn't exactly work yet
     loadFormula(change) {
       let newPosition = this.history.position + change;
-      console.log(this.history.position);
-      console.log(newPosition);
+
       if (newPosition < 0 || newPosition >= this.history.plots.length) {
         return;
       }
 
-      console.log("Chaning'");
       this.history.position = newPosition;
       this.newPlot = this.history.plots[newPosition];
     }
