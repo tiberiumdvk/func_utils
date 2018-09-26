@@ -54,8 +54,12 @@ export default {
     loadFormula(change) {
       let newPosition = this.history.position + change;
 
-      if (newPosition < 0 || newPosition >= this.history.plots.length) {
+      if (newPosition >= this.history.plots.length) {
         return;
+      }
+
+      if (newPosition < 0) {
+        this.newPlot = "";
       }
 
       this.history.position = newPosition;
