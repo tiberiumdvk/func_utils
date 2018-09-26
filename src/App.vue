@@ -1,28 +1,78 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <app-nav></app-nav>
+    <div class="container text-center">
+      <div class="input-group w-75">
+        <div class="input-group-prepend">
+          <span class="input-group-text">&#402;&#x27EE;&#x1d465;&#x27EF; &#61;</span>
+        </div>
+        <input type="text" class="form-control" placeholder="x^2" v-model.trim="newPlot" @keydown.up="loadFormula(1)" @keydown.down="loadFormula(-1)" @keyup.enter="addPlot">
+      </div>
+
+      <app-plot-container :plots="plots" :options="{grid: true,}"></app-plot-container>
+    </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
+import Nav from "./components/misc/Nav.vue";
+import PlotContainer from "./components/plotting/PlotContainer.vue";
 
 export default {
   name: "app",
+  data() {
+    return {
+      newPlot: "",
+      plots: [],
+      history: {
+        position: 0,
+        plots: [""]
+      }
+    };
+  },
+  methods: {
+    generateID() {
+      return (
+        "plot_" +
+        Math.random()
+          .toString(36)
+          .substr(2, 6)
+      );
+    },
+
+    addPlot() {
+      this.plots.unshift({
+        id: this.generateID(),
+        functions: [{ fn: this.newPlot }]
+      });
+
+      this.history.plots.unshift(this.newPlot);
+      this.newPlot = "";
+    },
+
+    // This doesn't exactly work yet
+    loadFormula(change) {
+      let newPosition = this.history.position + change;
+      console.log(this.history.position);
+      console.log(newPosition);
+      if (newPosition < 0 || newPosition >= this.history.plots.length) {
+        return;
+      }
+
+      console.log("Chaning'");
+      this.history.position = newPosition;
+      this.newPlot = this.history.plots[newPosition];
+    }
+  },
   components: {
-    HelloWorld
+    AppNav: Nav,
+    AppPlotContainer: PlotContainer
   }
 };
 </script>
 
 <style>
-#app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+div.input-group {
+  margin: 50px auto;
 }
 </style>
